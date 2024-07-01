@@ -1,14 +1,17 @@
 import './style.css'
 
+import WebGLShader from './webgl/webgl_shader';
+
 import vertexShaderSrc from "./shaders/vertex.glsl";
 import fragmentShaderSrc from "./shaders/fragment.glsl";
 
-import { WebGLApplication, WebGLContext } from './webgl/webgl_application'
+import WebGLApplication, { WebGLContext } from './webgl/webgl_application'
 
 const app = new WebGLApplication("#window");
 
-app.initialize((_: WebGLContext) => {
-  // TODO: initalize webgl application
+app.initialize((gl: WebGLContext) => {
+  const vertShader = WebGLShader(gl, gl.VERTEX_SHADER, vertexShaderSrc);
+  const fragShader = WebGLShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSrc);
 });
 
 app.tick((gl: WebGLContext, _: number) => {

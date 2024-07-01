@@ -1,6 +1,6 @@
 export type WebGLContext = WebGLRenderingContext | WebGL2RenderingContext;
 
-export class WebGLApplication {
+export default class WebGLApplication {
     private gl: WebGLContext | null = null;
     private lastTimestamp = 0;
 
@@ -53,6 +53,6 @@ export class WebGLApplication {
             requestAnimationFrame(tick);
             this.checkError();
         };
-        requestAnimationFrame(tick); 
+        requestAnimationFrame(tick);
     }
 };

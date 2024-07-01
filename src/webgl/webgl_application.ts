@@ -1,4 +1,4 @@
-export type WebGLContext = WebGLRenderingContext | WebGL2RenderingContext;
+export type WebGLContext = WebGL2RenderingContext;
 
 export default class WebGLApplication {
     private gl: WebGLContext | null = null;
@@ -23,18 +23,18 @@ export default class WebGLApplication {
         if (!container) {
             throw new Error(`Selector '${selector}' is not a valid HTML element`)
         }
-        container.innerHTML = `<canvas id="webgl-ca011f2b319"></canvas>`;
+        container.innerHTML = `<canvas width="800" height="600" id="webgl-ca011f2b319"></canvas>`;
 
         const canvas = document.querySelector<HTMLCanvasElement>(`canvas`);
         if (!canvas) {
             throw new Error(`Failed to inject a Canvas element into '${selector}'`);
         }
 
-        this.gl = canvas.getContext(`webgl2`) || canvas.getContext(`webgl`);
+        this.gl = canvas.getContext(`webgl2`);
         if (this.gl) {
             console.log(`WebGL version ${this.gl.getParameter(this.gl.VERSION)}`)
         } else {
-            throw new Error(`Failed to initialize WebGL`);
+            throw new Error(`Failed to initialize WebGL2`);
         }
 
         this.gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);

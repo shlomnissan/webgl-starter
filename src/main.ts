@@ -1,9 +1,9 @@
-import './style.css'
+import "./style.css";
 
 import { mat4, vec3 } from "gl-matrix";
 
-import WebGLApplication, { WebGLContext } from './webgl/webgl_application'
-import WebGLShaderProgram from './webgl/webgl_shader_program';
+import WebGLApplication, { WebGLContext } from "./webgl/webgl_application";
+import WebGLShaderProgram from "./webgl/webgl_shader_program";
 
 import vertexShaderSrc from "./shaders/vertex.glsl";
 import fragmentShaderSrc from "./shaders/fragment.glsl";
@@ -16,7 +16,7 @@ app.initialize((gl: WebGLContext) => {
   // create shader program
   program = new WebGLShaderProgram(gl, [
     [vertexShaderSrc, gl.VERTEX_SHADER],
-    [fragmentShaderSrc, gl.FRAGMENT_SHADER]
+    [fragmentShaderSrc, gl.FRAGMENT_SHADER],
   ]);
   program.use();
 
@@ -29,7 +29,8 @@ app.initialize((gl: WebGLContext) => {
 
   // view
   const view = mat4.create();
-  mat4.lookAt(view,
+  mat4.lookAt(
+    view,
     vec3.fromValues(0.0, 0.0, 0.0),
     vec3.fromValues(0.0, 0.0, 0.0),
     vec3.fromValues(0.0, 1.0, 1.0)
@@ -44,9 +45,8 @@ app.initialize((gl: WebGLContext) => {
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
   const vertices = new Float32Array([
-    0.0,  0.5, -2.0, 1.0, 0.0, 0.0,
-   -0.5, -0.5, -2.0, 0.0, 1.0, 0.0,
-    0.5, -0.5, -2.0, 0.0, 0.0, 1.0
+    0.0, 0.5, -2.0, 1.0, 0.0, 0.0, -0.5, -0.5, -2.0, 0.0, 1.0, 0.0, 0.5, -0.5,
+    -2.0, 0.0, 0.0, 1.0,
   ]);
 
   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);

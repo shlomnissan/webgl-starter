@@ -1,5 +1,5 @@
 import { mat4 } from "gl-matrix";
-import { WebGLContext } from "./webgl_application";
+import { WebGLContext } from "./WebGLApplication";
 
 type ShaderSourceWithType = [string, number];
 

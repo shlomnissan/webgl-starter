@@ -2,8 +2,8 @@ import "./style.css";
 
 import { mat4, vec3 } from "gl-matrix";
 
-import WebGLApplication, { WebGLContext } from "./webgl/webgl_application";
-import WebGLShaderProgram from "./webgl/webgl_shader_program";
+import WebGLApplication, { WebGLContext } from "./webgl/WebGLApplication";
+import WebGLShaderProgram from "./webgl/WebGLShaderProgram";
 
 import vertexShaderSrc from "./shaders/vertex.glsl";
 import fragmentShaderSrc from "./shaders/fragment.glsl";

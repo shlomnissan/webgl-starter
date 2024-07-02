@@ -47,7 +47,7 @@ export default class WebGLApplication {
 
   tick(callback: (gl: WebGLContext, dt: number) => void) {
     const tick = (timestamp: number) => {
-      const dt = timestamp - this.lastTimestamp;
+      const dt = (timestamp - this.lastTimestamp) / 1000;
       this.lastTimestamp = timestamp;
       callback(this.context(), dt);
       requestAnimationFrame(tick);

@@ -1,3 +1,4 @@
+import { mat4 } from "gl-matrix";
 import { WebGLContext } from "./webgl_application";
 
 type ShaderSourceWithType = [string, number];
@@ -54,6 +55,19 @@ export default class WebGLShaderProgram {
             throw new Error(`WebGL program is not initialized or has been deleted`);
         }
         return this.program_;
+    }
+
+    getUniform(name: string) {
+        const location = this.gl.getUniformLocation(this.program(), name);
+        if (location === null) {
+            throw new Error(`Uniform ${name} not found in shader program`);
+        }
+        return location;
+    }
+
+    setUniformMat4(name: string, value: mat4) {
+        const location = this.getUniform(name);
+        this.gl.uniformMatrix4fv(location, false, value);
     }
 
     use() {

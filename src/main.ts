@@ -8,27 +8,23 @@ import WebGLShaderProgram from "./webgl/WebGLShaderProgram";
 import vertexShaderSrc from "./shaders/vertex.glsl";
 import fragmentShaderSrc from "./shaders/fragment.glsl";
 
-const app = new WebGLApplication("#window");
+const app = new WebGLApplication("#webgl-app");
 let program: WebGLShaderProgram | null;
-let vao: WebGLVertexArrayObject | null;
+let triangle: WebGLVertexArrayObject | null;
 
-app.initialize((gl: WebGLContext) => {
-  // create shader program
-  program = new WebGLShaderProgram(gl, [
-    [vertexShaderSrc, gl.VERTEX_SHADER],
-    [fragmentShaderSrc, gl.FRAGMENT_SHADER],
-  ]);
+function setProjection(width: number, height: number) {
+  if (program === null) return;
   program.use();
 
-  // projection
   const projection = mat4.create();
   const fov = Math.PI / 4; // 45 degrees radians
-  const aspect_ratio = gl.drawingBufferWidth / gl.drawingBufferHeight;
+  const aspect_ratio = width / height;
   mat4.perspective(projection, fov, aspect_ratio, 0.1, 1000.0);
   program.setUniformMat4("Projection", projection);
+}
 
-  // create mesh
-  vao = gl.createVertexArray();
+function makeTriangle(gl: WebGLContext) {
+  const vao = gl.createVertexArray();
   gl.bindVertexArray(vao);
 
   const positionBuffer = gl.createBuffer();
@@ -49,25 +45,44 @@ app.initialize((gl: WebGLContext) => {
   gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 24, 12);
 
   gl.bindVertexArray(null);
+  return vao;
+}
+
+app.initialize((gl: WebGLContext) => {
+  // create shader program
+  program = new WebGLShaderProgram(gl, [
+    [vertexShaderSrc, gl.VERTEX_SHADER],
+    [fragmentShaderSrc, gl.FRAGMENT_SHADER],
+  ]);
+
+  // set projection
+  setProjection(app.getWidth(), app.getHeight());
+
+  // create mesh
+  triangle = makeTriangle(gl);
 });
 
-const view = mat4.create();
-mat4.lookAt(
-  view,
-  vec3.fromValues(0.0, 0.0, 1.0),
-  vec3.fromValues(0.0, 0.0, 0.0),
-  vec3.fromValues(0.0, 1.0, 0.0)
-);
+app.onresize((width: number, height: number) => {
+  setProjection(width, height);
+});
 
 app.tick((gl: WebGLContext, _: number) => {
   gl.clearColor(0.0, 0.0, 0.5, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   program?.use();
-
+  const view = mat4.create();
   const model = mat4.create();
+
+  mat4.lookAt(
+    view,
+    vec3.fromValues(0.0, 0.0, 1.0),
+    vec3.fromValues(0.0, 0.0, 0.0),
+    vec3.fromValues(0.0, 1.0, 0.0)
+  );
+
   program?.setUniformMat4("ModelView", mat4.mul(mat4.create(), view, model));
 
-  gl.bindVertexArray(vao);
+  gl.bindVertexArray(triangle);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
 });

@@ -1,8 +1,11 @@
 export type WebGLContext = WebGL2RenderingContext;
+export type ResizeCallback = (width: number, height: number) => void;
 
 export default class WebGLApplication {
   private gl: WebGLContext | null = null;
   private lastTimestamp = 0;
+  private width = 0; height = 0;
+  private resizeCallback: ResizeCallback | null = null;
 
   private checkError() {
     const error = this.context().getError();
@@ -18,17 +21,22 @@ export default class WebGLApplication {
     return this.gl;
   }
 
-  constructor(selector: string) {
-    const container = document.querySelector<HTMLElement>(selector);
-    if (!container) {
-      throw new Error(`Selector '${selector}' is not a valid HTML element`);
-    }
-    container.innerHTML = `<canvas width="800" height="600" id="webgl-ca011f2b319"></canvas>`;
+  private resizeCanvas(canvas: HTMLCanvasElement) {
+    this.width = canvas.clientWidth * window.devicePixelRatio;
+    this.height = canvas.clientHeight * window.devicePixelRatio;
 
-    const canvas = document.querySelector<HTMLCanvasElement>(`canvas`);
+    if (canvas.width !== this.width || canvas.height !== this.height) {
+      canvas.width = this.width;
+      canvas.height = this.height;
+    }
+  }
+
+  constructor(selector: string) {
+    const canvas = document.querySelector<HTMLCanvasElement>(selector);
     if (!canvas) {
       throw new Error(`Failed to inject a Canvas element into '${selector}'`);
     }
+    this.resizeCanvas(canvas);
 
     this.gl = canvas.getContext(`webgl2`);
     if (this.gl) {
@@ -37,12 +45,27 @@ export default class WebGLApplication {
       throw new Error(`Failed to initialize WebGL2`);
     }
 
-    this.gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
+    window.addEventListener("resize", () => {
+      this.resizeCanvas(canvas);
+      this.context().viewport(0, 0, this.getWidth(), this.getHeight());
+      if (this.resizeCallback) {
+        this.resizeCallback(this.getWidth(), this.getHeight());
+      }
+    });
+
     this.checkError();
   }
 
+  getWidth() { return this.width; }
+
+  getHeight() { return this.height; }
+
   initialize(callback: (gl: WebGLContext) => void) {
     callback(this.context());
+  }
+
+  onresize(callback: ResizeCallback) {
+    this.resizeCallback = callback;
   }
 
   tick(callback: (gl: WebGLContext, dt: number) => void) {

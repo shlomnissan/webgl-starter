@@ -66,6 +66,7 @@ export default class WebGLApplication {
   }
 
   initialize(callback: (gl: WebGLContext) => void) {
+    this.context().enable(this.context().DEPTH_TEST);
     callback(this.context());
   }
 

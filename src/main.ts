@@ -4,15 +4,14 @@ import { mat4, vec3 } from "gl-matrix";
 
 import WebGLApplication, { WebGLContext } from "./webgl/WebGLApplication";
 import WebGLShaderProgram from "./webgl/WebGLShaderProgram";
+import { cubeVertexArray } from "./cube";
 
 import vertexShaderSrc from "./shaders/vertex.glsl";
 import fragmentShaderSrc from "./shaders/fragment.glsl";
 
-import { cubeVertexArray } from "./cube";
-
 const app = new WebGLApplication("#webgl-app");
 let program: WebGLShaderProgram | null;
-let triangle: WebGLVertexArrayObject | null;
+let cube: WebGLVertexArrayObject | null;
 
 function setProjection(width: number, height: number) {
   if (program === null) return;
@@ -25,18 +24,19 @@ function setProjection(width: number, height: number) {
   program.setUniformMat4("Projection", projection);
 }
 
-function makeTriangle(gl: WebGLContext) {
+function uploadCubeVertexData(gl: WebGLContext) {
   const vao = gl.createVertexArray();
   gl.bindVertexArray(vao);
 
   const positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
   gl.bufferData(gl.ARRAY_BUFFER, cubeVertexArray, gl.STATIC_DRAW);
 
+  // vertices
   gl.enableVertexAttribArray(0);
   gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 32, 0);
 
+  // colors
   gl.enableVertexAttribArray(1);
   gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 32, 12);
 
@@ -51,11 +51,8 @@ app.initialize((gl: WebGLContext) => {
     [fragmentShaderSrc, gl.FRAGMENT_SHADER],
   ]);
 
-  // set projection
   setProjection(app.getWidth(), app.getHeight());
-
-  // create mesh
-  triangle = makeTriangle(gl);
+  cube = uploadCubeVertexData(gl);
 });
 
 app.onresize((width: number, height: number) => {
@@ -80,9 +77,8 @@ app.tick((gl: WebGLContext, _: number) => {
 
   mat4.rotate(model, model, 1, vec3.fromValues(Math.sin(now), Math.cos(now), 0));
   mat4.scale(model, model, vec3.fromValues(0.15, 0.15, 0.15));
-
   program?.setUniformMat4("ModelView", mat4.mul(mat4.create(), view, model));
 
-  gl.bindVertexArray(triangle);
+  gl.bindVertexArray(cube);
   gl.drawArrays(gl.TRIANGLES, 0, 36);
 });

@@ -4,7 +4,8 @@ export type ResizeCallback = (width: number, height: number) => void;
 export default class WebGLApplication {
   private gl: WebGLContext | null = null;
   private lastTimestamp = 0;
-  private width = 0; height = 0;
+  private width = 0;
+  private height = 0;
   private resizeCallback: ResizeCallback | null = null;
 
   private checkError() {
@@ -56,9 +57,13 @@ export default class WebGLApplication {
     this.checkError();
   }
 
-  getWidth() { return this.width; }
+  getWidth() {
+    return this.width;
+  }
 
-  getHeight() { return this.height; }
+  getHeight() {
+    return this.height;
+  }
 
   initialize(callback: (gl: WebGLContext) => void) {
     callback(this.context());

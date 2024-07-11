@@ -2,26 +2,26 @@ import "./style.css";
 
 import { mat4, vec3 } from "gl-matrix";
 
-import WebGLApplication, { WebGLContext } from "./webgl/WebGLApplication";
-import WebGLShaderProgram from "./webgl/WebGLShaderProgram";
+import Application, { WebGLContext } from "./core/application";
+import ShaderProgram from "./core/shader_program";
+import Camera from "./core/camera";
 import { cubeVertexArray } from "./cube";
 
 import vertexShaderSrc from "./shaders/vertex.glsl";
 import fragmentShaderSrc from "./shaders/fragment.glsl";
 
-const app = new WebGLApplication("#webgl-app");
-let program: WebGLShaderProgram | null;
+const app = new Application("#webgl-app");
+
+let program: ShaderProgram;
 let cube: WebGLVertexArrayObject | null;
+let camera: Camera;
 
 function setProjection(width: number, height: number) {
   if (program === null) return;
   program.use();
 
-  const projection = mat4.create();
-  const fov = Math.PI / 4; // 45 degrees radians
-  const aspect_ratio = width / height;
-  mat4.perspective(projection, fov, aspect_ratio, 0.1, 1000.0);
-  program.setUniformMat4("Projection", projection);
+  camera = new Camera(10, vec3.fromValues(0, 0, 0), width, height);
+  program.setUniformMat4("Projection", camera.getProjectionMatrix());
 }
 
 function uploadCubeVertexData(gl: WebGLContext) {
@@ -45,8 +45,7 @@ function uploadCubeVertexData(gl: WebGLContext) {
 }
 
 app.initialize((gl: WebGLContext) => {
-  // create shader program
-  program = new WebGLShaderProgram(gl, [
+  program = new ShaderProgram(gl, [
     [vertexShaderSrc, gl.VERTEX_SHADER],
     [fragmentShaderSrc, gl.FRAGMENT_SHADER],
   ]);
@@ -63,21 +62,15 @@ app.tick((gl: WebGLContext, _: number) => {
   gl.clearColor(0.0, 0.0, 0.5, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  program?.use();
-  const view = mat4.create();
-  mat4.lookAt(
-    view,
-    vec3.fromValues(0.0, 0.0, 1.0),
-    vec3.fromValues(0.0, 0.0, 0.0),
-    vec3.fromValues(0.0, 1.0, 0.0)
-  );
+  camera.update();
+  program.use();
 
   const model = mat4.create();
-  const now = Date.now() / 1000;
+  mat4.rotate(model, model, Math.PI / 4, vec3.fromValues(1, -1, 0));
+  mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
 
-  mat4.rotate(model, model, 1, vec3.fromValues(Math.sin(now), Math.cos(now), 0));
-  mat4.scale(model, model, vec3.fromValues(0.15, 0.15, 0.15));
-  program?.setUniformMat4("ModelView", mat4.mul(mat4.create(), view, model));
+  const modelView = mat4.mul(mat4.create(), camera.getViewMatrix(), model);
+  program.setUniformMat4("ModelView", modelView);
 
   gl.bindVertexArray(cube);
   gl.drawArrays(gl.TRIANGLES, 0, 36);

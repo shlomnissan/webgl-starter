@@ -1,36 +1,12 @@
 export type WebGLContext = WebGL2RenderingContext;
 export type ResizeCallback = (width: number, height: number) => void;
 
-export default class WebGLApplication {
+export default class Application {
   private gl: WebGLContext | null = null;
   private lastTimestamp = 0;
   private width = 0;
   private height = 0;
   private resizeCallback: ResizeCallback | null = null;
-
-  private checkError() {
-    const error = this.context().getError();
-    if (error !== this.context().NO_ERROR) {
-      console.error("WebGL error:", error);
-    }
-  }
-
-  private context() {
-    if (this.gl == null) {
-      throw new Error(`Failed to initialize WebGL application`);
-    }
-    return this.gl;
-  }
-
-  private resizeCanvas(canvas: HTMLCanvasElement) {
-    this.width = canvas.clientWidth * window.devicePixelRatio;
-    this.height = canvas.clientHeight * window.devicePixelRatio;
-
-    if (canvas.width !== this.width || canvas.height !== this.height) {
-      canvas.width = this.width;
-      canvas.height = this.height;
-    }
-  }
 
   constructor(selector: string) {
     const canvas = document.querySelector<HTMLCanvasElement>(selector);
@@ -57,24 +33,24 @@ export default class WebGLApplication {
     this.checkError();
   }
 
-  getWidth() {
+  public getWidth() {
     return this.width;
   }
 
-  getHeight() {
+  public getHeight() {
     return this.height;
   }
 
-  initialize(callback: (gl: WebGLContext) => void) {
+  public initialize(callback: (gl: WebGLContext) => void) {
     this.context().enable(this.context().DEPTH_TEST);
     callback(this.context());
   }
 
-  onresize(callback: ResizeCallback) {
+  public onresize(callback: ResizeCallback) {
     this.resizeCallback = callback;
   }
 
-  tick(callback: (gl: WebGLContext, dt: number) => void) {
+  public tick(callback: (gl: WebGLContext, dt: number) => void) {
     const tick = (timestamp: number) => {
       const dt = (timestamp - this.lastTimestamp) / 1000;
       this.lastTimestamp = timestamp;
@@ -83,5 +59,29 @@ export default class WebGLApplication {
       this.checkError();
     };
     requestAnimationFrame(tick);
+  }
+
+  private checkError() {
+    const error = this.context().getError();
+    if (error !== this.context().NO_ERROR) {
+      console.error("WebGL error:", error);
+    }
+  }
+
+  private context() {
+    if (this.gl == null) {
+      throw new Error(`Failed to initialize WebGL application`);
+    }
+    return this.gl;
+  }
+
+  private resizeCanvas(canvas: HTMLCanvasElement) {
+    this.width = canvas.clientWidth * window.devicePixelRatio;
+    this.height = canvas.clientHeight * window.devicePixelRatio;
+
+    if (canvas.width !== this.width || canvas.height !== this.height) {
+      canvas.width = this.width;
+      canvas.height = this.height;
+    }
   }
 }

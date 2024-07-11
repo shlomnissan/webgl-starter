@@ -1,9 +1,9 @@
 import { mat4 } from "gl-matrix";
-import { WebGLContext } from "./WebGLApplication";
+import { WebGLContext } from "./application";
 
 type ShaderSourceWithType = [string, number];
 
-export default class WebGLShaderProgram {
+export default class ShaderProgram {
   private gl: WebGLContext;
   private program_: WebGLProgram | null;
 
@@ -31,6 +31,29 @@ export default class WebGLShaderProgram {
 
     // delete shaders after successful program creation
     shaderObjects.forEach((shader) => this.gl.deleteShader(shader));
+
+    // TODO: parse uniforms from shader source
+  }
+
+  public getUniform(name: string) {
+    const location = this.gl.getUniformLocation(this.program(), name);
+    if (location === null) {
+      throw new Error(`Uniform ${name} not found in shader program`);
+    }
+    return location;
+  }
+
+  public setUniformMat4(name: string, value: mat4) {
+    const location = this.getUniform(name);
+    this.gl.uniformMatrix4fv(location, false, value);
+  }
+
+  public use() {
+    this.gl.useProgram(this.program());
+    const error = this.gl.getError();
+    if (error !== this.gl.NO_ERROR) {
+      throw new Error(`Error using WebGL program: ${error}`);
+    }
   }
 
   private createShader(source: string, type: number) {
@@ -55,26 +78,5 @@ export default class WebGLShaderProgram {
       throw new Error(`WebGL program is not initialized or has been deleted`);
     }
     return this.program_;
-  }
-
-  getUniform(name: string) {
-    const location = this.gl.getUniformLocation(this.program(), name);
-    if (location === null) {
-      throw new Error(`Uniform ${name} not found in shader program`);
-    }
-    return location;
-  }
-
-  setUniformMat4(name: string, value: mat4) {
-    const location = this.getUniform(name);
-    this.gl.uniformMatrix4fv(location, false, value);
-  }
-
-  use() {
-    this.gl.useProgram(this.program());
-    const error = this.gl.getError();
-    if (error !== this.gl.NO_ERROR) {
-      throw new Error(`Error using WebGL program: ${error}`);
-    }
   }
 }

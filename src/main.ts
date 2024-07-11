@@ -36,7 +36,7 @@ app.initialize((gl: WebGLContext) => {
   cube = new Mesh(gl, cubeVertexArray, cubeVertexCount);
 });
 
-app.onresize((width: number, height: number) => {
+app.onResize((width: number, height: number) => {
   setProjection(width, height);
 });
 

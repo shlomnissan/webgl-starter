@@ -1,5 +1,6 @@
 export type WebGLContext = WebGL2RenderingContext;
-export type ResizeCallback = (width: number, height: number) => void;
+type ResizeCallback = (width: number, height: number) => void;
+type MouseMoveCallback = (x: number, y: number) => void;
 
 export default class Application {
   private gl: WebGLContext | null = null;
@@ -7,15 +8,16 @@ export default class Application {
   private width = 0;
   private height = 0;
   private resizeCallback: ResizeCallback | null = null;
+  private canvas_: HTMLCanvasElement | null = null;
 
   constructor(selector: string) {
-    const canvas = document.querySelector<HTMLCanvasElement>(selector);
-    if (!canvas) {
+    this.canvas_ = document.querySelector<HTMLCanvasElement>(selector);
+    if (!this.canvas_) {
       throw new Error(`Failed to inject a Canvas element into '${selector}'`);
     }
-    this.resizeCanvas(canvas);
+    this.resizeCanvas(this.canvas());
 
-    this.gl = canvas.getContext(`webgl2`);
+    this.gl = this.canvas().getContext(`webgl2`);
     if (this.gl) {
       console.log(`WebGL version ${this.gl.getParameter(this.gl.VERSION)}`);
     } else {
@@ -23,7 +25,7 @@ export default class Application {
     }
 
     window.addEventListener("resize", () => {
-      this.resizeCanvas(canvas);
+      this.resizeCanvas(this.canvas());
       this.context().viewport(0, 0, this.getWidth(), this.getHeight());
       if (this.resizeCallback) {
         this.resizeCallback(this.getWidth(), this.getHeight());
@@ -46,8 +48,14 @@ export default class Application {
     callback(this.context());
   }
 
-  public onresize(callback: ResizeCallback) {
+  public onResize(callback: ResizeCallback) {
     this.resizeCallback = callback;
+  }
+
+  public onMouseMove(callback: MouseMoveCallback) {
+    this.canvas().addEventListener("mousemove", (e: MouseEvent) =>
+      callback(e.clientX, e.clientY)
+    );
   }
 
   public tick(callback: (gl: WebGLContext, dt: number) => void) {
@@ -66,6 +74,13 @@ export default class Application {
     if (error !== this.context().NO_ERROR) {
       console.error("WebGL error:", error);
     }
+  }
+
+  private canvas() {
+    if (this.canvas_ == null) {
+      throw new Error(`Failed to initialize Canvas element`);
+    }
+    return this.canvas_;
   }
 
   private context() {

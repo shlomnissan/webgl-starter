@@ -15,9 +15,9 @@ export default class Application {
     if (!this.canvas_) {
       throw new Error(`Failed to inject a Canvas element into '${selector}'`);
     }
-    this.resizeCanvas(this.canvas());
+    this.resizeCanvas(this.getCanvas());
 
-    this.gl = this.canvas().getContext(`webgl2`);
+    this.gl = this.getCanvas().getContext(`webgl2`);
     if (this.gl) {
       console.log(`WebGL version ${this.gl.getParameter(this.gl.VERSION)}`);
     } else {
@@ -25,7 +25,7 @@ export default class Application {
     }
 
     window.addEventListener("resize", () => {
-      this.resizeCanvas(this.canvas());
+      this.resizeCanvas(this.getCanvas());
       this.context().viewport(0, 0, this.getWidth(), this.getHeight());
       if (this.resizeCallback) {
         this.resizeCallback(this.getWidth(), this.getHeight());
@@ -33,6 +33,13 @@ export default class Application {
     });
 
     this.checkError();
+  }
+
+  public getCanvas() {
+    if (this.canvas_ == null) {
+      throw new Error(`Failed to initialize Canvas element`);
+    }
+    return this.canvas_;
   }
 
   public getWidth() {
@@ -53,7 +60,7 @@ export default class Application {
   }
 
   public onMouseMove(callback: MouseMoveCallback) {
-    this.canvas().addEventListener("mousemove", (e: MouseEvent) =>
+    this.getCanvas().addEventListener("mousemove", (e: MouseEvent) =>
       callback(e.clientX, e.clientY)
     );
   }
@@ -74,13 +81,6 @@ export default class Application {
     if (error !== this.context().NO_ERROR) {
       console.error("WebGL error:", error);
     }
-  }
-
-  private canvas() {
-    if (this.canvas_ == null) {
-      throw new Error(`Failed to initialize Canvas element`);
-    }
-    return this.canvas_;
   }
 
   private context() {

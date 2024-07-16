@@ -22,7 +22,7 @@ function setProjection(width: number, height: number) {
   if (program === null) return;
   program.use();
 
-  camera = new Camera(10, vec3.fromValues(0, 0, 0), width, height);
+  camera = new Camera(vec3.fromValues(0, 0, 0), width, height);
   program.setUniformMat4("Projection", camera.getProjectionMatrix());
 }
 
@@ -40,15 +40,17 @@ app.onResize((width: number, height: number) => {
   setProjection(width, height);
 });
 
+app.onMouseMove((x: number, y: number) => {
+  camera.rotate(x, y);
+});
+
 app.tick((gl: WebGLContext, _: number) => {
   gl.clearColor(0.0, 0.0, 0.5, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  camera.update();
   program.use();
 
   const model = mat4.create();
-  mat4.rotate(model, model, Math.PI / 4, vec3.fromValues(1, -1, 0));
   mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
 
   const modelView = mat4.mul(mat4.create(), camera.getViewMatrix(), model);

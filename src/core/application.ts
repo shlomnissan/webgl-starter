@@ -59,12 +59,6 @@ export default class Application {
     this.resizeCallback = callback;
   }
 
-  public onMouseMove(callback: MouseMoveCallback) {
-    this.getCanvas().addEventListener("mousemove", (e: MouseEvent) =>
-      callback(e.clientX, e.clientY)
-    );
-  }
-
   public tick(callback: (gl: WebGLContext, dt: number) => void) {
     const tick = (timestamp: number) => {
       const dt = (timestamp - this.lastTimestamp) / 1000;

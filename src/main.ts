@@ -22,7 +22,8 @@ function setProjection(width: number, height: number) {
   if (program === null) return;
   program.use();
 
-  camera = new Camera(vec3.fromValues(0, 0, 0), width, height);
+  camera = new Camera(app.getCanvas(), vec3.fromValues(0, 0, 0), width, height);
+
   program.setUniformMat4("Projection", camera.getProjectionMatrix());
 }
 
@@ -38,10 +39,6 @@ app.initialize((gl: WebGLContext) => {
 
 app.onResize((width: number, height: number) => {
   setProjection(width, height);
-});
-
-app.onMouseMove((x: number, y: number) => {
-  camera.rotate(x, y);
 });
 
 app.tick((gl: WebGLContext, _: number) => {

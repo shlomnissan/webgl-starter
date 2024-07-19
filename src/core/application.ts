@@ -1,6 +1,5 @@
 export type WebGLContext = WebGL2RenderingContext;
 type ResizeCallback = (width: number, height: number) => void;
-type MouseMoveCallback = (x: number, y: number) => void;
 
 export default class Application {
   private gl: WebGLContext | null = null;

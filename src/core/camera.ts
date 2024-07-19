@@ -1,13 +1,15 @@
 import { vec2, vec3, mat4, quat } from "gl-matrix";
 
 export default class Camera {
-  private canvas: HTMLCanvasElement;
+  private readonly canvas: HTMLCanvasElement;
+  private readonly sensitivity = 0.005;
+
   private projection = mat4.create();
   private view = mat4.create();
   private target = vec3.create();
   private lastMousePos: vec2 | null = null;
   private rotationQuat = quat.create();
-  private sensitivity = 0.005;
+  private verticalAngle = 0.0;
   private isDragging = false;
 
   constructor(
@@ -30,6 +32,14 @@ export default class Camera {
       let dx = (x - this.lastMousePos[0]) * this.sensitivity * -1;
       let dy = (y - this.lastMousePos[1]) * this.sensitivity * -1;
 
+      // prevent the direction vector from becoming parallel to the camera’s
+      // up vector, which causes the camera to flip.
+      this.verticalAngle += dy;
+      if (Math.abs(this.verticalAngle) > Math.PI / 2 - 0.001) {
+        this.verticalAngle -= dy;
+        dy = 0;
+      }
+
       const rotationX = quat.setAxisAngle(quat.create(), [1, 0, 0], dy);
       const rotationY = quat.setAxisAngle(quat.create(), [0, 1, 0], dx);
 
@@ -51,12 +61,16 @@ export default class Camera {
   }
 
   private addEventListeners() {
-    this.canvas.addEventListener("mousedown", () => {
-      this.isDragging = true;
+    this.canvas.addEventListener("mousedown", (e: MouseEvent) => {
+      if (e.button == 0) {
+        this.isDragging = true;
+      }
     });
 
-    this.canvas.addEventListener("mouseup", () => {
-      this.isDragging = false;
+    this.canvas.addEventListener("mouseup", (e: MouseEvent) => {
+      if (e.button == 0) {
+        this.isDragging = false;
+      }
     });
 
     this.canvas.addEventListener("mousemove", (e: MouseEvent) => {
@@ -64,6 +78,10 @@ export default class Camera {
         this.rotate(e.clientX, e.clientY);
       }
       this.lastMousePos = [e.clientX, e.clientY];
+    });
+
+    this.canvas.addEventListener("mouseleave", () => {
+      this.isDragging = false;
     });
   }
 

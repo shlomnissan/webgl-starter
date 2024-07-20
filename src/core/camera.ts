@@ -7,7 +7,7 @@ export default class Camera {
   private projection = mat4.create();
   private view = mat4.create();
   private target = vec3.create();
-  private lastMousePos: vec2 | null = null;
+  private lastMousePos = vec2.create();
   private rotationQuat = quat.create();
   private verticalAngle = 0.0;
   private isDragging = false;
@@ -83,11 +83,15 @@ export default class Camera {
     this.canvas.addEventListener("mouseleave", () => {
       this.isDragging = false;
     });
+
+    this.canvas.addEventListener("contextmenu", (e: MouseEvent) => {
+      e.preventDefault();
+    });
   }
 
   private updateViewMatrix() {
-    const eye = vec3.fromValues(0.0, 0.0, 1.0);
-    vec3.transformQuat(eye, eye, this.rotationQuat);
-    mat4.lookAt(this.view, eye, this.target, [0, 1, 0]);
+    const position = vec3.fromValues(0.0, 0.0, 1.0);
+    vec3.transformQuat(position, position, this.rotationQuat);
+    mat4.lookAt(this.view, position, this.target, [0, 1, 0]);
   }
 }

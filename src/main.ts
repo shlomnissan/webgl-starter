@@ -5,7 +5,7 @@ import ShaderProgram from "./core/shader_program";
 import Camera from "./core/camera";
 import Mesh from "./core/mesh";
 
-import { cubeVertexArray, cubeVertexCount } from "./cube";
+import { cubeVertexArray, cubeVertexCount } from "./mesh/cube";
 
 import vertexShaderSrc from "./shaders/vertex.glsl";
 import fragmentShaderSrc from "./shaders/fragment.glsl";

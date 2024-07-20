@@ -10,6 +10,7 @@ export default class Camera {
   private lastMousePos = vec2.create();
   private rotationQuat = quat.create();
   private verticalAngle = 0.0;
+  private distance = 1;
   private isDragging = false;
 
   constructor(
@@ -55,6 +56,13 @@ export default class Camera {
     }
   }
 
+  private zoom(deltaY: number) {
+    const zoomSensitivity = 0.05;
+    const zoomAmount = deltaY * this.sensitivity * zoomSensitivity;
+    this.distance += zoomAmount;
+    this.updateViewMatrix();
+  }
+
   public get projectionMatrix() {
     return this.projection;
   }
@@ -87,13 +95,17 @@ export default class Camera {
       this.isDragging = false;
     });
 
+    this.canvas.addEventListener("wheel", (e: WheelEvent) => {
+      this.zoom(e.deltaY);
+    });
+
     this.canvas.addEventListener("contextmenu", (e: MouseEvent) => {
       e.preventDefault();
     });
   }
 
   private updateViewMatrix() {
-    const position = vec3.fromValues(0.0, 0.0, 1.0);
+    const position = vec3.fromValues(0.0, 0.0, this.distance);
     vec3.transformQuat(position, position, this.rotationQuat);
     mat4.lookAt(this.view, position, this.target, [0, 1, 0]);
   }

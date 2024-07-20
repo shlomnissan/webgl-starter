@@ -4,22 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WebGL starter</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        width: 100%;
+        height: 100%;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
   </head>
   <body>
-    <div id="app">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" class="logo" alt="Vite logo" />
-        </a>
-        <a href="https://www.typescriptlang.org/" target="_blank">
-          <img src="/typescript.svg" class="logo vanilla" alt="TypeScript logo" />
-        </a>
-        <a href="https://www.khronos.org/webgl/" target="_blank">
-          <img src="/webgl.svg" class="logo vanilla" alt="WeblGL logo" />
-        </a>
-      </div>
-      <canvas id="webgl-app"></canvas>
-    </div>
+    <canvas id="webgl-app"></canvas>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

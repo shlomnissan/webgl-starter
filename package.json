@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "format": "prettier --write src/**/*.{ts,css}"
+    "format": "prettier --write src/**/*.{ts,css,html}"
   },
   "devDependencies": {
     "@types/gl-matrix": "^3.2.0",

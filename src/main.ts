@@ -1,5 +1,3 @@
-import "./style.css";
-
 import { mat4, vec3 } from "gl-matrix";
 
 import Application, { WebGLContext } from "./core/application";
@@ -21,10 +19,8 @@ let cube: Mesh;
 function setProjection(width: number, height: number) {
   if (program === null) return;
   program.use();
-
-  camera = new Camera(app.getCanvas(), vec3.fromValues(0, 0, 0), width, height);
-
-  program.setUniformMat4("Projection", camera.getProjectionMatrix());
+  camera.updateProjectionMatrix(width, height);
+  program.setUniformMat4("Projection", camera.projectionMatrix);
 }
 
 app.initialize((gl: WebGLContext) => {
@@ -32,6 +28,13 @@ app.initialize((gl: WebGLContext) => {
     [vertexShaderSrc, gl.VERTEX_SHADER],
     [fragmentShaderSrc, gl.FRAGMENT_SHADER],
   ]);
+
+  camera = new Camera(
+    app.getCanvas(),
+    vec3.fromValues(0, 0, 0),
+    app.getWidth(),
+    app.getHeight()
+  );
 
   setProjection(app.getWidth(), app.getHeight());
   cube = new Mesh(gl, cubeVertexArray, cubeVertexCount);
@@ -41,16 +44,13 @@ app.onResize((width: number, height: number) => {
   setProjection(width, height);
 });
 
-app.tick((gl: WebGLContext, _: number) => {
-  gl.clearColor(0.0, 0.0, 0.5, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
+app.tick((_: number) => {
   program.use();
 
   const model = mat4.create();
   mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
 
-  const modelView = mat4.mul(mat4.create(), camera.getViewMatrix(), model);
+  const modelView = mat4.mul(mat4.create(), camera.viewMatrix, model);
   program.setUniformMat4("ModelView", modelView);
 
   cube.draw(program);

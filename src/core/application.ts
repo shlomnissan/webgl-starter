@@ -1,17 +1,21 @@
+import { vec3 } from "gl-matrix";
+
 export type WebGLContext = WebGL2RenderingContext;
 type ResizeCallback = (width: number, height: number) => void;
 
 export default class Application {
+  private readonly clearColor = vec3.fromValues(0.0, 0.0, 0.5);
+
   private gl: WebGLContext | null = null;
   private lastTimestamp = 0;
   private width = 0;
   private height = 0;
   private resizeCallback: ResizeCallback | null = null;
-  private canvas_: HTMLCanvasElement | null = null;
+  private canvas: HTMLCanvasElement | null = null;
 
   constructor(selector: string) {
-    this.canvas_ = document.querySelector<HTMLCanvasElement>(selector);
-    if (!this.canvas_) {
+    this.canvas = document.querySelector<HTMLCanvasElement>(selector);
+    if (!this.canvas) {
       throw new Error(`Failed to inject a Canvas element into '${selector}'`);
     }
     this.resizeCanvas(this.getCanvas());
@@ -35,10 +39,10 @@ export default class Application {
   }
 
   public getCanvas() {
-    if (this.canvas_ == null) {
+    if (this.canvas == null) {
       throw new Error(`Failed to initialize Canvas element`);
     }
-    return this.canvas_;
+    return this.canvas;
   }
 
   public getWidth() {
@@ -58,11 +62,15 @@ export default class Application {
     this.resizeCallback = callback;
   }
 
-  public tick(callback: (gl: WebGLContext, dt: number) => void) {
+  public tick(callback: (dt: number) => void) {
     const tick = (timestamp: number) => {
+      const c = this.clearColor;
+      this.context().clearColor(c[0], c[1], c[2], 1);
+      this.context().clear(this.context().COLOR_BUFFER_BIT);
+
       const dt = (timestamp - this.lastTimestamp) / 1000;
       this.lastTimestamp = timestamp;
-      callback(this.context(), dt);
+      callback(dt);
       requestAnimationFrame(tick);
       this.checkError();
     };

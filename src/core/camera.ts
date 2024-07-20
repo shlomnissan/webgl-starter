@@ -21,10 +21,13 @@ export default class Camera {
     this.canvas = canvas;
     this.target = target;
 
-    mat4.perspective(this.projection, Math.PI / 4, width / height, 0.1, 1000);
-
+    this.updateProjectionMatrix(width, height);
     this.updateViewMatrix();
     this.addEventListeners();
+  }
+
+  public updateProjectionMatrix(width: number, height: number) {
+    mat4.perspective(this.projection, Math.PI / 4, width / height, 0.1, 1000);
   }
 
   public rotate(x: number, y: number) {
@@ -52,11 +55,11 @@ export default class Camera {
     }
   }
 
-  public getProjectionMatrix() {
+  public get projectionMatrix() {
     return this.projection;
   }
 
-  public getViewMatrix() {
+  public get viewMatrix() {
     return this.view;
   }
 

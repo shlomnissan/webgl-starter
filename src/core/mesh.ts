@@ -6,12 +6,14 @@ export default class Mesh {
   private data: Float32Array;
   private count: number;
   private vao: WebGLVertexArrayObject | null;
+  private type: number;
 
   constructor(gl: WebGLContext, vertexData: Float32Array, count: number) {
     this.gl = gl;
     this.data = vertexData;
     this.count = count;
     this.vao = gl.createVertexArray();
+    this.type = this.gl.TRIANGLES;
 
     this.uploadVertexData();
   }
@@ -20,7 +22,11 @@ export default class Mesh {
     program.use();
 
     this.gl.bindVertexArray(this.vao);
-    this.gl.drawArrays(this.gl.TRIANGLES, 0, this.count);
+    this.gl.drawArrays(this.type, 0, this.count);
+  }
+
+  public drawLines() {
+    this.type = this.gl.LINES;
   }
 
   private uploadVertexData() {

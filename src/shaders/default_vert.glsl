@@ -10,5 +10,5 @@ uniform mat4 ModelView;
 
 void main() {
     color = inColor;
-    gl_Position = Projection * ModelView * vec4(inPosition.xyz, 1.0);
+    gl_Position = Projection * ModelView * vec4(inPosition, 1.0);
 }

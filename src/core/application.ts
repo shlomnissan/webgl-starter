@@ -4,7 +4,7 @@ export type WebGLContext = WebGL2RenderingContext;
 type ResizeCallback = (width: number, height: number) => void;
 
 export default class Application {
-  private readonly clearColor = vec3.fromValues(0.0, 0.0, 0.5);
+  private readonly clearColor = vec3.fromValues(0.12, 0.13, 0.25);
 
   private gl: WebGLContext | null = null;
   private lastTimestamp = 0;

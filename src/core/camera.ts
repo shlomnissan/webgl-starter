@@ -11,7 +11,7 @@ export default class Camera {
   private lastMousePos = vec2.create();
   private rotationQuat = quat.create();
   private verticalAngle = 0.0;
-  private distance = 1;
+  private distance = 15.0;
   private isDragging = false;
 
   constructor(
@@ -60,7 +60,7 @@ export default class Camera {
   private zoom(deltaY: number) {
     const zoomSensitivity = 0.05;
     const zoomAmount = deltaY * this.sensitivity * zoomSensitivity;
-    this.distance = clamp(this.distance + zoomAmount, 0.3, 15.0);
+    this.distance = clamp(this.distance + zoomAmount, 0.3, 45.0);
     this.updateViewMatrix();
   }
 

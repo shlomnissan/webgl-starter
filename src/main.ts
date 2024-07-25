@@ -4,7 +4,7 @@ import Application, { WebGLContext } from "./core/application";
 import ShaderProgram from "./core/shader_program";
 import Camera from "./core/camera";
 import Mesh from "./core/mesh";
-import Grid from "core/grid";
+import Grid from "./helpers/grid";
 
 import { cubeVertexArray, cubeVertexCount } from "./mesh/cube";
 
@@ -17,13 +17,6 @@ let program: ShaderProgram;
 let camera: Camera;
 let cube: Mesh;
 let grid: Grid;
-
-function setProjection(width: number, height: number) {
-  if (program === null) return;
-  program.use();
-  camera.updateProjectionMatrix(width, height);
-  program.setUniformMat4("Projection", camera.projectionMatrix);
-}
 
 app.initialize((gl: WebGLContext) => {
   program = new ShaderProgram(gl, [
@@ -39,13 +32,7 @@ app.initialize((gl: WebGLContext) => {
   );
 
   grid = new Grid(gl, 16);
-
-  setProjection(app.getWidth(), app.getHeight());
   cube = new Mesh(gl, cubeVertexArray, cubeVertexCount);
-});
-
-app.onResize((width: number, height: number) => {
-  setProjection(width, height);
 });
 
 app.tick((_: number) => {
@@ -55,8 +42,13 @@ app.tick((_: number) => {
   mat4.translate(model, model, vec3.fromValues(0.0, 1.0, 0.0));
 
   const modelView = mat4.mul(mat4.create(), camera.viewMatrix, model);
+  program.setUniformMat4("Projection", camera.projectionMatrix);
   program.setUniformMat4("ModelView", modelView);
 
   cube.draw(program);
   grid.draw(camera);
+});
+
+app.onResize((width: number, height: number) => {
+  camera.updateProjectionMatrix(width, height);
 });

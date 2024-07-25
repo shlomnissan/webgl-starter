@@ -1,5 +1,5 @@
 import { vec2, vec3, mat4, quat } from "gl-matrix";
-import clamp from "helpers/clamp";
+import clamp from "utils/clamp";
 
 export default class Camera {
   private readonly canvas: HTMLCanvasElement;
@@ -50,7 +50,6 @@ export default class Camera {
 
       quat.multiply(this.rotationQuat, rotationY, this.rotationQuat);
       quat.multiply(this.rotationQuat, this.rotationQuat, rotationX);
-
       quat.normalize(this.rotationQuat, this.rotationQuat);
 
       this.updateViewMatrix();

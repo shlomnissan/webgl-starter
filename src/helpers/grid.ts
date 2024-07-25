@@ -1,8 +1,8 @@
-import { WebGLContext } from "./application";
+import { WebGLContext } from "../core/application";
 import { vec3 } from "gl-matrix";
-import ShaderProgram from "./shader_program";
-import Mesh from "./mesh";
-import Camera from "./camera";
+import ShaderProgram from "../core/shader_program";
+import Mesh from "core/mesh";
+import Camera from "core/camera";
 
 import vertexShaderSrc from "shaders/grid_vert.glsl";
 import fragmentShaderSrc from "shaders/grid_frag.glsl";
@@ -45,7 +45,7 @@ export default class Grid {
 
         let xOffset = -div;
         for (let i = 0; i <= this.dimensions; ++i) {
-            const color: vec3 = i == div ? [1.0, 0.0, 0.0] : [0.5, 0.5, 0.5];
+            const color: vec3 = i == div ? [0.0, 0.0, 0.8] : [0.3, 0.3, 0.3];
             this.addVertex([xOffset, 0.0, -div], color);
             this.addVertex([xOffset, 0.0, div], color);
             xOffset += 1;
@@ -53,7 +53,7 @@ export default class Grid {
 
         let zOffset = -div;
         for (let i = 0; i <= this.dimensions; ++i) {
-            const color: vec3 = i == div ? [0.0, 0.0, 1.0] : [0.5, 0.5, 0.5];
+            const color: vec3 = i == div ? [0.8, 0.0, 0.0] : [0.3, 0.3, 0.3];
             this.addVertex([-div, 0.0, zOffset], color);
             this.addVertex([div, 0.0, zOffset], color);
             zOffset += 1;

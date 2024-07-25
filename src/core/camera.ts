@@ -1,4 +1,5 @@
 import { vec2, vec3, mat4, quat } from "gl-matrix";
+import clamp from "helpers/clamp";
 
 export default class Camera {
   private readonly canvas: HTMLCanvasElement;
@@ -59,7 +60,7 @@ export default class Camera {
   private zoom(deltaY: number) {
     const zoomSensitivity = 0.05;
     const zoomAmount = deltaY * this.sensitivity * zoomSensitivity;
-    this.distance += zoomAmount;
+    this.distance = clamp(this.distance + zoomAmount, 0.3, 15.0);
     this.updateViewMatrix();
   }
 

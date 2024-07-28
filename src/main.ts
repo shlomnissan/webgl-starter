@@ -37,6 +37,7 @@ app.initialize((gl: WebGLContext) => {
 
 app.tick((_: number) => {
   program.use();
+  camera.update();
 
   const model = mat4.create();
   mat4.translate(model, model, vec3.fromValues(0.0, 1.0, 0.0));

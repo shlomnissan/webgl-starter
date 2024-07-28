@@ -18,16 +18,11 @@ export default class Camera {
   private yaw = 0.7;
   private pitch = 0.5;
 
-  constructor(
-    canvas: HTMLCanvasElement,
-    target: vec3,
-    width: number,
-    height: number
-  ) {
+  constructor(canvas: HTMLCanvasElement, target: vec3) {
     this.canvas = canvas;
     this.target = target;
 
-    this.updateProjectionMatrix(width, height);
+    this.updateProjectionMatrix(canvas.clientWidth, canvas.clientHeight);
     this.addEventListeners();
   }
 

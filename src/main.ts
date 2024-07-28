@@ -24,12 +24,7 @@ app.initialize((gl: WebGLContext) => {
     [fragmentShaderSrc, gl.FRAGMENT_SHADER],
   ]);
 
-  camera = new Camera(
-    app.getCanvas(),
-    vec3.fromValues(0, 0, 0),
-    app.getWidth(),
-    app.getHeight()
-  );
+  camera = new Camera(app.getCanvas(), [0, 0, 0]);
 
   grid = new Grid(gl, 16);
   cube = new Mesh(gl, cubeVertexArray, cubeVertexCount);

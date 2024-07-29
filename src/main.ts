@@ -6,7 +6,7 @@ import Camera from "./core/camera";
 import Mesh from "./core/mesh";
 import Grid from "./helpers/grid";
 
-import { cubeVertexArray, cubeVertexCount } from "./mesh/cube";
+import { cubeVertexArray } from "./mesh/cube";
 
 import vertexShaderSrc from "shaders/default_vert.glsl";
 import fragmentShaderSrc from "shaders/default_frag.glsl";
@@ -27,7 +27,7 @@ app.initialize((gl: WebGLContext) => {
   camera = new Camera(app.getCanvas(), [0, 0, 0]);
 
   grid = new Grid(gl, 16);
-  cube = new Mesh(gl, cubeVertexArray, cubeVertexCount);
+  cube = new Mesh(gl, cubeVertexArray);
 });
 
 app.tick((_: number) => {

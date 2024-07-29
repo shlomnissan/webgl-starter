@@ -29,7 +29,7 @@ export default class Grid {
     this.data = new Float32Array(vertices * this.valuesPerVertex);
 
     this.generateVertices();
-    this.mesh = new Mesh(gl, this.data, vertices);
+    this.mesh = new Mesh(gl, this.data);
     this.mesh.drawLines();
   }
 

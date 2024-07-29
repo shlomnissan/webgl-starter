@@ -2,16 +2,17 @@ import { WebGLContext } from "./application";
 import ShaderProgram from "./shader_program";
 
 export default class Mesh {
+  private readonly attribsPerVertex = 8;
   private gl: WebGLContext;
   private data: Float32Array;
   private count: number;
   private vao: WebGLVertexArrayObject | null;
   private type: number;
 
-  constructor(gl: WebGLContext, vertexData: Float32Array, count: number) {
+  constructor(gl: WebGLContext, vertexData: Float32Array) {
     this.gl = gl;
     this.data = vertexData;
-    this.count = count;
+    this.count = vertexData.length / this.attribsPerVertex;
     this.vao = gl.createVertexArray();
     this.type = this.gl.TRIANGLES;
 
@@ -35,9 +36,8 @@ export default class Mesh {
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, vertexBuffer);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, this.data, this.gl.STATIC_DRAW);
 
-    const attribsPerVertex: number = 8;
     const size: number = Float32Array.BYTES_PER_ELEMENT;
-    const stride: number = attribsPerVertex * size;
+    const stride: number = this.attribsPerVertex * size;
 
     // vertices
     this.gl.enableVertexAttribArray(0);

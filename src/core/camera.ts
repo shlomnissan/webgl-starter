@@ -3,7 +3,7 @@ import clamp from "utils/clamp";
 
 export default class Camera {
   private readonly canvas: HTMLCanvasElement;
-  private readonly rotationSpeed = 0.007;
+  private readonly rotationSpeed = 0.005;
   private readonly zoomSpeed = 0.005;
   private readonly panSpeed = 0.01;
 

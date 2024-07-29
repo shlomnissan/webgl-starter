@@ -8,7 +8,6 @@ import vertexShaderSrc from "shaders/grid_vert.glsl";
 import fragmentShaderSrc from "shaders/grid_frag.glsl";
 
 export default class Grid {
-  private readonly valuesPerVertex = 8;
   private readonly dimensions: number;
   private readonly mesh: Mesh;
 
@@ -26,7 +25,7 @@ export default class Grid {
 
     const lines = (dimensions + 1) * 2;
     const vertices = lines * 2;
-    this.data = new Float32Array(vertices * this.valuesPerVertex);
+    this.data = new Float32Array(vertices * Mesh.attribsPerVertex);
 
     this.generateVertices();
     this.mesh = new Mesh(gl, this.data);

@@ -23,7 +23,6 @@ app.initialize((gl: WebGLContext) => {
   ]);
 
   camera = new Camera(app.getCanvas(), [0, 0, 0]);
-
   grid = new Grid(gl, 16);
   mesh = new Mesh(gl, plane.vertices, plane.indices);
 });

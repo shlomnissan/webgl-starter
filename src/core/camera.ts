@@ -31,17 +31,17 @@ export default class Camera {
   }
 
   public rotate(x: number, y: number) {
-    this.yaw -= x * this.rotationSpeed;
+    const cosAngle = vec3.dot(this.getViewDirection(), [0, 1.0, 0]);
+    if (-cosAngle * Math.sign(y) > 0.98) {
+      y = 0;
+    }
 
-    const pitch_range = Math.PI / 2 - Number.EPSILON;
+    this.yaw -= x * this.rotationSpeed;
     this.pitch += y * this.rotationSpeed;
-    this.pitch = clamp(this.pitch, -pitch_range, pitch_range);
   }
 
   public pan(x: number, y: number) {
-    const direction = vec3.sub(vec3.create(), this.target, this.position);
-    vec3.normalize(direction, direction);
-
+    const direction = this.getViewDirection();
     const right = vec3.cross(vec3.create(), direction, [0.0, 1.0, 0.0]);
     vec3.normalize(right, right);
 
@@ -70,6 +70,13 @@ export default class Camera {
 
   public get viewMatrix() {
     return mat4.lookAt(this.view, this.position, this.target, [0.0, 1.0, 0.0]);
+  }
+
+  private getViewDirection(): vec3 {
+    const direction = vec3.create();
+    vec3.sub(direction, this.target, this.position);
+    vec3.normalize(direction, direction);
+    return direction;
   }
 
   private addEventListeners() {

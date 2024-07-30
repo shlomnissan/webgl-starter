@@ -14,9 +14,9 @@ export default class Camera {
   private lastMousePos = vec2.create();
   private isRotating = false;
   private isPanning = false;
-  private distance = 15.0;
-  private yaw = 0.7;
-  private pitch = 0.5;
+  private distance = 18.0;
+  private yaw = 0.5;
+  private pitch = 0.35;
 
   constructor(canvas: HTMLCanvasElement, target: vec3) {
     this.canvas = canvas;

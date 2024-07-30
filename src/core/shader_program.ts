@@ -1,4 +1,4 @@
-import { mat4 } from "gl-matrix";
+import { mat4, vec2 } from "gl-matrix";
 import { WebGLContext } from "./application";
 
 type ShaderSourceWithType = [string, number];
@@ -44,8 +44,15 @@ export default class ShaderProgram {
   }
 
   public setUniformMat4(name: string, value: mat4) {
-    const location = this.getUniform(name);
-    this.gl.uniformMatrix4fv(location, false, value);
+    this.gl.uniformMatrix4fv(this.getUniform(name), false, value);
+  }
+
+  public setUniformVec2(name: string, value: vec2) {
+    this.gl.uniform2fv(this.getUniform(name), value);
+  }
+
+  public setUniformFloat(name: string, value: number) {
+    this.gl.uniform1f(this.getUniform(name), value);
   }
 
   public use() {

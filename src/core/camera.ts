@@ -39,7 +39,7 @@ export default class Camera {
   }
 
   public pan(x: number, y: number) {
-    const direction = vec3.sub( vec3.create(), this.target, this.position);
+    const direction = vec3.sub(vec3.create(), this.target, this.position);
     vec3.normalize(direction, direction);
 
     const right = vec3.cross(vec3.create(), direction, [0.0, 1.0, 0.0]);

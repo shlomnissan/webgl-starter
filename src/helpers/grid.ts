@@ -1,6 +1,6 @@
 import { WebGLContext } from "../core/application";
 import { vec3 } from "gl-matrix";
-import ShaderProgram from "../core/shader_program";
+import Program from "core/program";
 import Mesh from "core/mesh";
 import Camera from "core/camera";
 
@@ -11,14 +11,14 @@ export default class Grid {
   private readonly dimensions: number;
   private readonly mesh: Mesh;
 
-  private shader: ShaderProgram;
+  private shader: Program;
   private idx = 0;
   private data: Float32Array;
 
   constructor(gl: WebGLContext, dimensions: number) {
     this.dimensions = dimensions;
 
-    this.shader = new ShaderProgram(gl, [
+    this.shader = new Program(gl, [
       [vertexShaderSrc, gl.VERTEX_SHADER],
       [fragmentShaderSrc, gl.FRAGMENT_SHADER],
     ]);

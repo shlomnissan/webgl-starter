@@ -1,5 +1,5 @@
 import Application, { WebGLContext } from "./core/application";
-import ShaderProgram from "./core/shader_program";
+import Program from "./core/program";
 import Camera from "./core/camera";
 import Mesh from "./core/mesh";
 import Grid from "./helpers/grid";
@@ -13,13 +13,13 @@ import fragmentShaderSrc from "shaders/default_frag.glsl";
 const app = new Application("#webgl-app");
 const plane = new Plane(3, 3, 1, 1);
 
-let program: ShaderProgram;
+let program: Program;
 let camera: Camera;
 let mesh: Mesh;
 let grid: Grid;
 
 app.initialize((gl: WebGLContext) => {
-  program = new ShaderProgram(gl, [
+  program = new Program(gl, [
     [vertexShaderSrc, gl.VERTEX_SHADER],
     [fragmentShaderSrc, gl.FRAGMENT_SHADER],
   ]);

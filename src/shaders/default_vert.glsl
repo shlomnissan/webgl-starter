@@ -6,6 +6,7 @@ layout (location = 2) in vec2 inUV;
 
 uniform mat4 Projection;
 uniform mat4 ModelView;
+uniform mat3 non;
 
 void main() {
     gl_Position = Projection * ModelView * vec4(inPosition, 1.0);

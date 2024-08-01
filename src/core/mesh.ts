@@ -1,5 +1,5 @@
 import { WebGLContext } from "./application";
-import ShaderProgram from "./shader_program";
+import Program from "./program";
 
 export default class Mesh {
   public static readonly attribsPerVertex = 8;
@@ -29,7 +29,7 @@ export default class Mesh {
     }
   }
 
-  public draw(program: ShaderProgram) {
+  public draw(program: Program) {
     program.use();
     this.gl.bindVertexArray(this.vao);
     if (this.indexData.length) {

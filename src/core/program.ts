@@ -3,13 +3,18 @@ import { WebGLContext } from "./application";
 
 type ShaderSourceWithType = [string, number];
 
-export default class ShaderProgram {
+export default class Program {
+  private readonly uniformRegex =
+    /^\s*uniform\s+(?:highp|mediump|lowp|)[\w\s]+\s+(\w+)\s*;\s*$/gm;
+
   private gl: WebGLContext;
   private program_: WebGLProgram | null;
+  private uniformLocations: Map<string, WebGLUniformLocation>;
 
   constructor(gl: WebGLContext, shaders: ShaderSourceWithType[]) {
     this.gl = gl;
     this.program_ = this.gl.createProgram();
+    this.uniformLocations = new Map<string, WebGLUniformLocation>();
 
     const shaderObjects: WebGLShader[] = [];
     shaders.forEach((shaderSourceWithType) => {
@@ -18,12 +23,12 @@ export default class ShaderProgram {
         shaderSourceWithType[1]
       );
       shaderObjects.push(shader);
-      this.gl.attachShader(this.program(), shader);
+      this.gl.attachShader(this.program, shader);
     });
 
-    this.gl.linkProgram(this.program());
-    if (!this.gl.getProgramParameter(this.program(), this.gl.LINK_STATUS)) {
-      const message = this.gl.getProgramInfoLog(this.program());
+    this.gl.linkProgram(this.program);
+    if (!this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS)) {
+      const message = this.gl.getProgramInfoLog(this.program);
       shaderObjects.forEach((shader) => this.gl.deleteShader(shader));
       this.gl.deleteProgram(this.program_);
       throw new Error(`Error linking program: ${message}`);
@@ -32,12 +37,12 @@ export default class ShaderProgram {
     // delete shaders after successful program creation
     shaderObjects.forEach((shader) => this.gl.deleteShader(shader));
 
-    // TODO: parse uniforms from shader source
+    shaders.forEach((shader) => this.parseUniforms(shader[0]));
   }
 
   public getUniform(name: string) {
-    const location = this.gl.getUniformLocation(this.program(), name);
-    if (location === null) {
+    const location = this.uniformLocations.get(name);
+    if (!location) {
       throw new Error(`Uniform ${name} not found in shader program`);
     }
     return location;
@@ -56,7 +61,7 @@ export default class ShaderProgram {
   }
 
   public use() {
-    this.gl.useProgram(this.program());
+    this.gl.useProgram(this.program);
     const error = this.gl.getError();
     if (error !== this.gl.NO_ERROR) {
       throw new Error(`Error using WebGL program: ${error}`);
@@ -80,7 +85,23 @@ export default class ShaderProgram {
     return shader;
   }
 
-  private program() {
+  private parseUniforms(source: string) {
+    let match;
+    while ((match = this.uniformRegex.exec(source)) !== null) {
+      const name = match[1];
+      const location = this.gl.getUniformLocation(this.program, name);
+      if (location) {
+        this.uniformLocations.set(name, location);
+      } else {
+        console.warn(
+          `Uniform '${name}' is not accessible. ` +
+            `It may be unused or improperly configured.`
+        );
+      }
+    }
+  }
+
+  private get program() {
     if (!this.program_) {
       throw new Error(`WebGL program is not initialized or has been deleted`);
     }
